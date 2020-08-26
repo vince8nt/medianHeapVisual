@@ -174,7 +174,7 @@ sortType = new Selector("#9090FF", "#707070", "#FF0000");
 sortType.addButton(10, 480, 100, 50, "Bubble Sort");
 sortType.addButton(10, 540, 100, 50, "Insertion Sort");
 sortType.addButton(120, 480, 100, 50, "Binary Insertion");
-sortType.addButton(120, 540, 100, 50, "Cocktail Shaker");
+sortType.addButton(120, 540, 100, 50, "Median Heap");
 sortType.addButton(230, 480, 100, 50, "Quicksort");
 sortType.addButton(230, 540, 100, 50, "Counting Sort");
 sortType.addButton(340, 480, 100, 50, "Binary Radix MSB");
@@ -310,6 +310,9 @@ c.addEventListener('click', function(event) {
     	}
     	else if (sortType.getSelected() === "Binary Insertion") {
     		doMods(binaryInsertionSort([...myGraph.getItems()]));
+    	}
+    	else if (sortType.getSelected() === "Median Heap") {
+    		doMods(doMedianHeapSort([...myGraph.getItems()]));
     	}
     	else {
     		enableButtons();
