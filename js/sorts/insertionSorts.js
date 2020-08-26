@@ -4,10 +4,9 @@ function binaryInsertionSort(arr) {
 	for (var i = 1; i < arr.length; i++) {
 		var min = 0;
 		var max = i;
-		var insertIndex = 0;
+		var insertIndex = Math.floor((min + max) / 2);
 		const insertValue = getIndex(arr, i, mods);
 		while(min < max) { // find insertIndex in O(log n)
-			insertIndex = Math.floor((min + max) / 2);
 			if (lessThan(arr, i, insertIndex, mods)) {
 				max = insertIndex;
 			}
@@ -16,6 +15,7 @@ function binaryInsertionSort(arr) {
 			}
 			else
 				break;
+			insertIndex = Math.floor((min + max) / 2);
 		}
 		for (var j = i; j > insertIndex; j--) {
 			setIndex(arr, j, getIndex(arr, j - 1, mods), mods);
