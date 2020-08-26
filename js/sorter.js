@@ -146,7 +146,6 @@ class Graph {
 		}
 	}
 	shuffle() {
-		console.log("graph type: " + typeof(this.items[0]));
 		for (var i = this.items.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * i);
 			const temp = this.items[i];
@@ -154,7 +153,6 @@ class Graph {
   			this.items[j] = temp;
 		}
 		this.draw([]);
-		console.log("graph type: " + typeof(this.items[0]));
 	}
 	setDuplicates(hasDups) {
 		this.duplicates = hasDups;
@@ -305,7 +303,7 @@ c.addEventListener('click', function(event) {
     	console.log("Go button clicked. Using " + sortType.getSelected() + " sort.");
     	disableButtons();
 		if (sortType.getSelected() === "Bubble Sort") {
-    		doSwaps(bubbleSort([...myGraph.getItems()]));
+    		doMods(bubbleSort([...myGraph.getItems()]));
 		}
     	else if (sortType.getSelected() === "Cocktail Shaker") {
 
@@ -319,37 +317,45 @@ c.addEventListener('click', function(event) {
 
 }, false);
 
-function doSwaps(swaps) {
-	var g = myGraph.getItems();
-	var delay = 1500 / g.length;
-	setTimeout(swap, 100, swaps, 0, delay, 0);
+function doMods(mods) {
+	var arr = myGraph.getItems();
+	var delay = 1500 / arr.length;
+	setTimeout(modify, 100, arr, mods, 0, delay, 0, 0, 0);
 }
 
-function swap(swaps, i, delay, swapsNum) {
-	if (i < swaps.length) {
-		var bold = swaps[i][0],
-			first = swaps[i][1][0],
-			second = swaps[i][1][1];
-		if (first !== -1 && second !== -1) {
-			var g = myGraph.getItems();
-			var temp = g[first];
-			g[first] = g[second];
-			g[second] = temp;
-			swapsNum++;
+function modify(arr, mods, i, delay, reads, writes, comps) {
+	if (i < mods.length) {
+		if (mods[i][0] === "read") {
+			modify(arr, mods, i + 1, delay, reads + 1, writes, comps);
 		}
-		myGraph.draw(bold);
-		setTimeout(swap, delay, swaps, i + 1, delay, swapsNum);
+		else {
+			if (mods[i][0] === "compare") {
+				comps++;
+				myGraph.draw([mods[i][1], mods[i][2]]);
+			}
+			else if (mods[i][0] === "write") {
+				writes++;
+				arr[mods[i][1]] = mods[i][2];
+				myGraph.draw([mods[i][1]]);
+			}
+			setTimeout(modify, delay, arr, mods, i + 1, delay, reads, writes, comps);
+		}
 	}
 	else {
-		setTimeout(endSwaps, delay, swaps.length, swapsNum);
+		setTimeout(endMods, delay, reads, writes, comps);
 	}
 }
 
-function endSwaps(c, s) {
+function endMods(reads, writes, comps) {
 	enableButtons();
 	myGraph.draw([]);
-	alert("Array sorted: " + c + " comparisons, " + s + " swaps.");
+	alert("Array sorted\ncomparisons: " + comps + "\nreads: " + reads + "\nwrites: " + writes);
 }
+
+
+
+
+
 
 
 
