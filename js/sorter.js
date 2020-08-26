@@ -314,6 +314,9 @@ c.addEventListener('click', function(event) {
     	else if (sortType.getSelected() === "Median Heap") {
     		doMods(doMedianHeapSort([...myGraph.getItems()]));
     	}
+    	else if (sortType.getSelected() === "Quicksort") {
+    		doMods(quicksort([...myGraph.getItems()]));
+    	}
     	else {
     		enableButtons();
     		console.log("Failed to find " + sortType.getSelected() + " sort.");
