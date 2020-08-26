@@ -176,11 +176,11 @@ sortType.addButton(10, 540, 100, 50, "Insertion Sort");
 sortType.addButton(120, 480, 100, 50, "Binary Insertion");
 sortType.addButton(120, 540, 100, 50, "Median Heap");
 sortType.addButton(230, 480, 100, 50, "Quicksort");
-sortType.addButton(230, 540, 100, 50, "Counting Sort");
-sortType.addButton(340, 480, 100, 50, "Binary Radix MSB");
-sortType.addButton(340, 540, 100, 50, "Merge Sort");
-sortType.addButton(450, 480, 100, 50, "Heap Sort");
-sortType.addButton(450, 540, 100, 50, "In-Place Merge");
+sortType.addButton(230, 540, 100, 50, "");
+sortType.addButton(340, 480, 100, 50, "");
+sortType.addButton(340, 540, 100, 50, "");
+sortType.addButton(450, 480, 100, 50, "");
+sortType.addButton(450, 540, 100, 50, "");
 
 shuffleButton = new Button(560, 480, 110, 110, "Shuffle", "#20C010", "#000000");
 dupButton = new Button(705, 480, 100, 50, "duplicates: off", "#C01010", "#000000");
@@ -312,7 +312,7 @@ c.addEventListener('click', function(event) {
     		doMods(binaryInsertionSort([...myGraph.getItems()]));
     	}
     	else if (sortType.getSelected() === "Median Heap") {
-    		doMods(doMedianHeapSort([...myGraph.getItems()]));
+    		doMods(medianHeapSort([...myGraph.getItems()]));
     	}
     	else if (sortType.getSelected() === "Quicksort") {
     		doMods(quicksort([...myGraph.getItems()]));

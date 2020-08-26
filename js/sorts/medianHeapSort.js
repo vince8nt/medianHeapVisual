@@ -1,10 +1,10 @@
-function doMedianHeapSort(arr) {
+function medianHeapSort(arr) {
 	var mods = [];
-	medianHeapSort(arr, 0, arr.length - 1, mods);
+	medianHeapSortR(arr, 0, arr.length - 1, mods);
 	return mods;
 }
 
-function medianHeapSort(arr, begin, end, mods) {
+function medianHeapSortR(arr, begin, end, mods) {
 		if (end > begin) {
 			// split sub-array in half and make each side a heap
 			var mid = Math.floor((begin + end) / 2);
@@ -22,8 +22,8 @@ function medianHeapSort(arr, begin, end, mods) {
 			// arr[mid] is the median of the sub-array and is on the correct final index
 
 			// recursively call medianHeapSort() on each side of the sub-array
-			medianHeapSort(arr, begin, mid - 1, mods);
-			medianHeapSort(arr, mid + 1, end, mods);
+			medianHeapSortR(arr, begin, mid - 1, mods);
+			medianHeapSortR(arr, mid + 1, end, mods);
 		}
 	}
 
