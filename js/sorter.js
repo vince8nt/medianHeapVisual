@@ -1,0 +1,360 @@
+var c = document.getElementById("sorterContainer");
+var ctx = c.getContext("2d");
+
+
+
+// classes -----------------------------------------------------------------------
+
+class Button {
+	constructor(x, y, width, height, label, color, border) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.label = label;
+		this.color = color;
+		this.border = border;
+		this.draw();
+	}
+	draw() {
+		ctx.fillStyle = this.border;
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
+		ctx.fillStyle = "#000000";
+		ctx.fillText(this.label, this.x + 10, this.y + this.height / 2 + 5);
+	}
+	setBorder(border) {
+		this.border = border;
+		this.draw();
+	}
+	setColor(color) {
+		this.color = color;
+		this.draw();
+	}
+	setLabel(label) {
+		this.label = label;
+		this.draw();
+	}
+	getLabel() {
+		return this.label;
+	}
+	clicked(pointerX, pointerY) {
+		if (pointerX < this.x || this.x + this.width < pointerX) {
+			return false;
+		}
+		if (pointerY < this.y || this.y + this.height < pointerY) {
+			return false;
+		}
+		return true;
+	}	
+}
+
+class Selector {
+	constructor (color, bColor, sColor) {
+		this.color = color;
+		this.bColor = bColor;
+		this.sColor = sColor;
+		this.buttons = [];
+		this.bold = -1;
+	}
+	addButton (x, y, width, height, text) {
+		if (this.buttons.length == 0) {
+			this.buttons.push(new Button(x, y, width, height, text, this.color, this.sColor));
+			this.bold = 0;
+		}
+		else {
+			this.buttons.push(new Button(x, y, width, height, text, this.color, this.bColor));
+		}
+	}
+	setBorder(border) {
+		this.bColor = border;
+		for (var i = 0; i < this.buttons.length; i++) {
+			if (i != this.bold)
+				this.buttons[i].setBorder(this.bColor);
+		}
+	}
+	setColor(color) {
+		this.color = color;
+		for (var i = 0; i < this.buttons.length; i++) {
+			this.buttons[i].setColor(this.color);
+		}
+	}
+	getSelected () {
+		if (this.bold == -1)
+			return "";
+		return this.buttons[this.bold].getLabel();
+	}
+	clicked (pointerX, pointerY) {
+		for (var i = 0; i < this.buttons.length; i++) {
+			if (this.buttons[i].clicked(pointerX, pointerY)) {
+				this.buttons[this.bold].setBorder(this.bColor);
+				this.bold = i;
+				this.buttons[i].setBorder(this.sColor);
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+class Graph {
+	constructor(left, top, width, height) {
+		this.left = left;
+		this.top = top;
+		this.width = width;
+		this.height = height;
+		this.color = "#10FF10";
+		this.border = "#000000";
+		this.duplicates = false;
+		this.setLength(10);
+	}
+	draw(bold) { // bold is an array of each bolded index (in order from least to greatest)
+		ctx.clearRect(this.left, this.top, this.width, this.height);
+		var length = this.items.length;
+		var boldIndex = 0;
+		for (var i = 0; i < length; i++) {
+			var x = this.left + i * this.width / length;
+			var tall = this.items[i] / length * this.height;
+			var y = this.top + this.height - tall;
+			ctx.fillStyle = this.border;
+			ctx.fillRect(x, y, this.width / length, tall);
+			if (i == bold[boldIndex]) {
+				ctx.fillStyle = "#FF0000";
+				if (boldIndex < bold.length - 1)
+					boldIndex++;
+			}
+			else {
+				ctx.fillStyle = this.color;
+			}
+			ctx.fillRect(x + 2, y + 2, this.width / length - 4, tall - 4);
+		}
+	}
+	getLength() {
+		return this.items.length;
+	}
+	setLength(newLength) {
+		if (newLength > 1) {
+			this.items = [];
+			for (var i = 0; i < newLength; i++) {
+				if (this.duplicates && Math.random() < 0.5 && i > 0)
+					this.items.push(i);
+				else
+					this.items.push(i + 1);
+			}
+			this.draw([]);
+		}
+	}
+	shuffle() {
+		console.log("graph type: " + typeof(this.items[0]));
+		for (var i = this.items.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * i);
+			const temp = this.items[i];
+			this.items[i] = this.items[j];
+  			this.items[j] = temp;
+		}
+		this.draw([]);
+		console.log("graph type: " + typeof(this.items[0]));
+	}
+	setDuplicates(hasDups) {
+		this.duplicates = hasDups;
+		this.setLength(this.items.length);
+	}
+	getDuplicates() {
+		return this.duplicates;
+	}
+	getItems() {
+		return this.items;
+	}
+}
+
+// make visuals -------------------------------------------------------------------
+
+myGraph = new Graph(10, 10, 980, 440);
+
+sortType = new Selector("#9090FF", "#707070", "#FF0000");
+sortType.addButton(10, 480, 100, 50, "Bubble Sort");
+sortType.addButton(10, 540, 100, 50, "Insertion Sort");
+sortType.addButton(120, 480, 100, 50, "Selection Sort");
+sortType.addButton(120, 540, 100, 50, "Cocktail Shaker");
+sortType.addButton(230, 480, 100, 50, "Quicksort");
+sortType.addButton(230, 540, 100, 50, "Counting Sort");
+sortType.addButton(340, 480, 100, 50, "Binary Radix MSB");
+sortType.addButton(340, 540, 100, 50, "Merge Sort");
+sortType.addButton(450, 480, 100, 50, "Heap Sort");
+sortType.addButton(450, 540, 100, 50, "In-Place Merge");
+
+shuffleButton = new Button(560, 480, 110, 110, "Shuffle", "#20C010", "#000000");
+dupButton = new Button(705, 480, 100, 50, "duplicates: off", "#C01010", "#000000");
+addButton = new Button(780, 540, 50, 50, "+", "#20C010", "#000000");
+sizeDisp = new Button(730, 540, 50, 50, 8, "#A0A0A0", "#A0A0A0");
+subButton = new Button(680, 540, 50, 50, "-", "#C01010", "#000000");
+goButton = new Button(840, 480, 150, 110, "Go", "#20C010", "#000000");
+
+var sorting = false;
+
+// program starts here ------------------------------------------------------------
+
+function doAdd() {
+	var length = myGraph.getLength();
+	if (length < 100) {
+		subButton.setBorder("#000000");     // visually enable sub button
+		subButton.setColor("#C01010");
+		myGraph.setLength(++length);        // set graph length
+		sizeDisp.setLabel(length);          // set length label
+		if (length == 100) {
+			addButton.setBorder("#707070"); // visually disable add button
+			addButton.setColor("#909090");
+		}
+	}
+}
+
+function doSub() {
+	var length = myGraph.getLength();
+	if (length > 2) {
+		addButton.setBorder("#000000");     // visually enable add button
+		addButton.setColor("#20C010");
+		myGraph.setLength(--length);        // set graph length
+		sizeDisp.setLabel(length);          // set length label
+		if (length == 2) {
+			subButton.setBorder("#707070"); // visually disable sub button
+			subButton.setColor("#909090");
+		}
+	}
+}
+
+function clickDuplicates() {
+	myGraph.setDuplicates(!myGraph.getDuplicates());
+	if (myGraph.getDuplicates()) {
+		dupButton.setColor("#20C010");
+		dupButton.setLabel("duplicates: on");
+    }
+    else {
+		dupButton.setColor("#C01010");
+		dupButton.setLabel("duplicates: off");
+    }
+}
+
+function disableButtons() {
+	sorting = true;
+
+	sortType.setBorder("#707070");
+	sortType.setColor("#909090");
+	shuffleButton.setBorder("#707070");
+	shuffleButton.setColor("#909090");
+	dupButton.setBorder("#707070");
+	dupButton.setColor("#909090");
+	addButton.setBorder("#707070");
+	addButton.setColor("#909090");
+	subButton.setBorder("#707070");
+	subButton.setColor("#909090");
+	goButton.setBorder("#707070");
+	goButton.setColor("#909090");
+}
+
+function enableButtons() {
+	sorting = false;
+
+	sortType.setBorder("#707070");
+	sortType.setColor("#9090FF");
+	shuffleButton.setBorder("#000000");
+	shuffleButton.setColor("#20C010");
+	dupButton.setBorder("#000000");
+	if (myGraph.getDuplicates())
+		dupButton.setColor("#20C010");
+	else
+		dupButton.setColor("#C01010");
+	if (myGraph.getLength() < 100) {
+		addButton.setBorder("#000000");
+		addButton.setColor("#20C010");
+	}
+	if (myGraph.getLength() > 2) {
+		subButton.setBorder("#000000");
+		subButton.setColor("#C01010");
+	}
+	goButton.setBorder("#000000");
+	goButton.setColor("#20C010");
+}
+
+c.addEventListener('click', function(event) {
+	if (sorting) return; // does not allow modifications during the sorting process
+
+    var screenX = event.pageX - c.offsetLeft - c.clientLeft;
+    var screenY = event.pageY - c.offsetTop - c.clientTop;
+    
+    if (sortType.clicked(screenX, screenY)) {           // selector buttons
+    	console.log("selector button clicked");
+    }
+    else if (shuffleButton.clicked(screenX, screenY)) { // shuffle button
+    	console.log("shuffle button clicked");
+    	myGraph.shuffle();
+    }
+    else if (addButton.clicked(screenX, screenY)) {     // add button
+    	console.log("add button clicked");
+    	doAdd();
+    }
+    else if (subButton.clicked(screenX, screenY)) {     // subtract button
+    	console.log("subtract button clicked");
+    	doSub();
+    }
+    else if (dupButton.clicked(screenX, screenY)) {     // duplicates button
+    	console.log("duplicates button clicked");
+    	clickDuplicates();
+    }
+    else if (goButton.clicked(screenX, screenY)) {      // go button
+    	console.log("Go button clicked. Using " + sortType.getSelected() + " sort.");
+    	disableButtons();
+		if (sortType.getSelected() === "Bubble Sort") {
+    		doSwaps(bubbleSort([...myGraph.getItems()]));
+		}
+    	else if (sortType.getSelected() === "Cocktail Shaker") {
+
+    	}
+    	else {
+    		enableButtons();
+    		console.log("Failed to find " + sortType.getSelected() + " sort.");
+
+    	}
+    }
+
+}, false);
+
+function doSwaps(swaps) {
+	var g = myGraph.getItems();
+	var delay = 1500 / g.length;
+	setTimeout(swap, 100, swaps, 0, delay, 0);
+}
+
+function swap(swaps, i, delay, swapsNum) {
+	if (i < swaps.length) {
+		var bold = swaps[i][0],
+			first = swaps[i][1][0],
+			second = swaps[i][1][1];
+		if (first !== -1 && second !== -1) {
+			var g = myGraph.getItems();
+			var temp = g[first];
+			g[first] = g[second];
+			g[second] = temp;
+			swapsNum++;
+		}
+		myGraph.draw(bold);
+		setTimeout(swap, delay, swaps, i + 1, delay, swapsNum);
+	}
+	else {
+		setTimeout(endSwaps, delay, swaps.length, swapsNum);
+	}
+}
+
+function endSwaps(c, s) {
+	enableButtons();
+	myGraph.draw([]);
+	alert("Array sorted: " + c + " comparisons, " + s + " swaps.");
+}
+
+
+
+
+
+
+
+
