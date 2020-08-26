@@ -176,8 +176,8 @@ sortType.addButton(10, 540, 100, 50, "Insertion Sort");
 sortType.addButton(120, 480, 100, 50, "Binary Insertion");
 sortType.addButton(120, 540, 100, 50, "Median Heap");
 sortType.addButton(230, 480, 100, 50, "Quicksort");
-sortType.addButton(230, 540, 100, 50, "");
-sortType.addButton(340, 480, 100, 50, "");
+sortType.addButton(230, 540, 100, 50, "Gnome Sort");
+sortType.addButton(340, 480, 100, 50, "Optimized Gnome");
 sortType.addButton(340, 540, 100, 50, "");
 sortType.addButton(450, 480, 100, 50, "");
 sortType.addButton(450, 540, 100, 50, "");
@@ -317,10 +317,15 @@ c.addEventListener('click', function(event) {
     	else if (sortType.getSelected() === "Quicksort") {
     		doMods(quicksort([...myGraph.getItems()]));
     	}
+    	else if (sortType.getSelected() === "Gnome Sort") {
+    		doMods(gnomeSort([...myGraph.getItems()]));
+    	}
+    	else if (sortType.getSelected() === "Optimized Gnome") {
+    		doMods(optimizedGnomeSort([...myGraph.getItems()]));
+    	}
     	else {
     		enableButtons();
     		console.log("Failed to find " + sortType.getSelected() + " sort.");
-
     	}
     }
 

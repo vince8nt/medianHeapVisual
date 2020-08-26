@@ -44,3 +44,36 @@ function insertionSort(arr) {
 	}
 	return mods;
 }
+
+function gnomeSort(arr) {
+	var mods = [];
+
+	var index = 0;
+	while (index < arr.length) {
+		if (index > 0 && lessThan(arr, index, index - 1, mods)) {
+			swap(arr, index, index - 1, mods);
+			index--;
+		}
+		else
+			index++
+	}
+
+	return mods;
+}
+
+function optimizedGnomeSort(arr) {
+	var mods = [];
+
+	for (var i = 1; i < arr.length; i++) {
+		for (var j = i; j > 0 && lessThan(arr, j, j - 1, mods); j--)
+			swap(arr, j, j - 1, mods);
+	}
+
+	return mods;
+}
+
+
+
+
+
+
