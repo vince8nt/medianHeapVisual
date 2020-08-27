@@ -105,44 +105,44 @@ class Graph {
 		this.width = width;
 		this.height = height;
 		this.color = "#FFFFFF";
-		this.highlightColor = "#00FF00";
+		this.compColor = "#00FF00";
+		this.writeColor = "#FF0000";
 		this.duplicates = false;
 		this.setLength(25);
 		this.lastHighlight = [];
 	}
 	draw() { // bold is an array of each bolded index (in order from least to greatest)
 		for (var i = 0; i < this.items.length; i++) {
-			this.drawIndex(i, false);
+			this.drawIndex(i, this.color);
 		}
 	}
 	replace(index, value) {
 		this.drawUnHighlight();
 		this.lastHighlight = [index];
 		this.items[index] = value;
-		this.drawIndex(index, true);
+		this.drawIndex(index, this.writeColor);
 
 	}
 	highlight(highlight) {
 		this.drawUnHighlight();
 		this.lastHighlight = highlight;
 		for (var i = 0; i < highlight.length; i++) {
-			this.drawIndex(highlight[i], true);
+			this.drawIndex(highlight[i], this.compColor);
 		}
 	}
 	drawUnHighlight() {
 		for (var i = 0; i < this.lastHighlight.length; i++) {
-			this.drawIndex(this.lastHighlight[i], false);
+			this.drawIndex(this.lastHighlight[i], this.color);
 		}
 	}
-	drawIndex(index, isHighlight) {
+	drawIndex(index, color) {
 		var barWidth = this.width / this.items.length;
 		var x = Math.round(this.left + index * barWidth);
 		var x2 = this.left + (index + 1) * barWidth;
 		barWidth = Math.round(x2 - x);
 		var tall = Math.round(this.items[index] / this.items.length * this.height);
 		ctx.clearRect(x, this.top, barWidth, this.height);
-		if (isHighlight) ctx.fillStyle = this.highlightColor;
-		else ctx.fillStyle = this.color;
+		ctx.fillStyle = color;
 		ctx.fillRect(x, this.top + this.height - tall, barWidth, tall);
 	}
 	getLength() {
@@ -177,7 +177,7 @@ class Graph {
 		return this.duplicates;
 	}
 	getItems() {
-		return this.items;
+		return [...this.items];
 	}
 }
 
@@ -321,34 +321,34 @@ c.addEventListener('click', function(event) {
     	console.log("Go button clicked. Using " + sortType.getSelected() + " sort.");
     	disableButtons();
 		if (sortType.getSelected() === "Bubble Sort") {
-    		doMods(bubbleSort([...myGraph.getItems()]));
+    		doMods(bubbleSort(myGraph.getItems()));
 		}
     	else if (sortType.getSelected() === "Insertion Sort") {
-    		doMods(insertionSort([...myGraph.getItems()]));
+    		doMods(insertionSort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Binary Insertion") {
-    		doMods(binaryInsertionSort([...myGraph.getItems()]));
+    		doMods(binaryInsertionSort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Median Heap") {
-    		doMods(medianHeapSort([...myGraph.getItems()]));
+    		doMods(medianHeapSort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Median Heap 2") {
-    		doMods(medianHeapSort2([...myGraph.getItems()]));
+    		doMods(medianHeapSort2(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Quicksort") {
-    		doMods(quicksort([...myGraph.getItems()]));
+    		doMods(quicksort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Gnome Sort") {
-    		doMods(gnomeSort([...myGraph.getItems()]));
+    		doMods(gnomeSort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Optimized Gnome") {
-    		doMods(optimizedGnomeSort([...myGraph.getItems()]));
+    		doMods(optimizedGnomeSort(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Reverse") {
-    		doMods(reverseArr([...myGraph.getItems()]));
+    		doMods(reverseArr(myGraph.getItems()));
     	}
     	else if (sortType.getSelected() === "Stupid Heap") {
-    		doMods(stupidHeapSort([...myGraph.getItems()]));
+    		doMods(stupidHeapSort(myGraph.getItems()));
     	}
     	else {
     		enableButtons();
@@ -387,7 +387,7 @@ function modify(mods, i, delay, reads, writes, comps) {
 
 function endMods(reads, writes, comps) {
 	enableButtons();
-	myGraph.draw([]);
+	myGraph.draw();
 	alert("Array sorted\ncomparisons: " + comps + "\nreads: " + reads + "\nwrites: " + writes);
 }
 
