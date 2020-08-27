@@ -108,7 +108,7 @@ class Graph {
 		this.compColor = "#00FF00";
 		this.writeColor = "#FF0000";
 		this.duplicates = false;
-		this.setLength(25);
+		this.setLength(100);
 		this.lastHighlight = [];
 	}
 	draw() { // bold is an array of each bolded index (in order from least to greatest)
@@ -321,7 +321,7 @@ c.addEventListener('click', function(event) {
     	console.log("Go button clicked. Using " + sortType.getSelected() + " sort.");
     	disableButtons();
 		if (sortType.getSelected() === "Bubble Sort") {
-    		doMods(bubbleSort(myGraph.getItems()));
+    		doMods(quicksort2(myGraph.getItems()));
 		}
     	else if (sortType.getSelected() === "Insertion Sort") {
     		doMods(insertionSort(myGraph.getItems()));
@@ -359,6 +359,7 @@ c.addEventListener('click', function(event) {
 }, false);
 
 function doMods(mods) {
+	console.log("Sort is " + mods.length + " long.");
 	var delay = 1500 / myGraph.getLength();
 	setTimeout(modify, 100, mods, 0, delay, 0, 0, 0);
 }

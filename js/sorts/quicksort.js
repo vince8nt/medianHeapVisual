@@ -25,3 +25,54 @@ function partition(arr, begin, end, mods) {
 	swap(arr, i + 1, end, mods);
 	return i + 1;
 }
+
+function quicksort2(arr) {
+	var mods = [];
+	splitQuick2(arr, 0, arr.length - 1, mods);
+	return mods;
+}
+
+function splitQuick2(arr, begin, end, mods) {
+	if (begin < end) {
+		
+		var p = partition2(arr, begin, end, mods);
+		splitQuick2(arr, begin, p - 1, mods);
+		splitQuick2(arr, p + 1, end, mods);
+	}
+}
+
+function partition2(arr, begin, end, mods) {
+	var p = end;
+	while (begin < end) {
+		if (lessThan(arr, p, begin, mods)) {
+			if (lessThan(arr, end, p, mods)) {
+				swap(arr, begin, end, mods);
+			}
+			else
+				end--;
+		}
+		else
+			begin++;
+	}
+	if (lessThan(arr, end, p, mods)) {
+		swap(arr, p, end + 1, mods);
+		return end + 1;
+	}
+	else {
+		swap(arr, p, end, mods);
+		return end;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
