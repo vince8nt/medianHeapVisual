@@ -107,7 +107,7 @@ class Graph {
 		this.color = "#10FF10";
 		this.border = "#000000";
 		this.duplicates = false;
-		this.setLength(10);
+		this.setLength(100);
 	}
 	draw(bold) { // bold is an array of each bolded index (in order from least to greatest)
 		ctx.clearRect(this.left, this.top, this.width, this.height);
@@ -178,14 +178,14 @@ sortType.addButton(120, 540, 100, 50, "Median Heap");
 sortType.addButton(230, 480, 100, 50, "Quicksort");
 sortType.addButton(230, 540, 100, 50, "Gnome Sort");
 sortType.addButton(340, 480, 100, 50, "Optimized Gnome");
-sortType.addButton(340, 540, 100, 50, "");
-sortType.addButton(450, 480, 100, 50, "");
+sortType.addButton(340, 540, 100, 50, "Median Heap 2");
+sortType.addButton(450, 480, 100, 50, "Reverse");
 sortType.addButton(450, 540, 100, 50, "");
 
 shuffleButton = new Button(560, 480, 110, 110, "Shuffle", "#20C010", "#000000");
 dupButton = new Button(705, 480, 100, 50, "duplicates: off", "#C01010", "#000000");
 addButton = new Button(780, 540, 50, 50, "+", "#20C010", "#000000");
-sizeDisp = new Button(730, 540, 50, 50, 8, "#A0A0A0", "#A0A0A0");
+sizeDisp = new Button(730, 540, 50, 50, myGraph.getLength(), "#A0A0A0", "#A0A0A0");
 subButton = new Button(680, 540, 50, 50, "-", "#C01010", "#000000");
 goButton = new Button(840, 480, 150, 110, "Go", "#20C010", "#000000");
 
@@ -314,6 +314,9 @@ c.addEventListener('click', function(event) {
     	else if (sortType.getSelected() === "Median Heap") {
     		doMods(medianHeapSort([...myGraph.getItems()]));
     	}
+    	else if (sortType.getSelected() === "Median Heap 2") {
+    		doMods(medianHeapSort2([...myGraph.getItems()]));
+    	}
     	else if (sortType.getSelected() === "Quicksort") {
     		doMods(quicksort([...myGraph.getItems()]));
     	}
@@ -322,6 +325,9 @@ c.addEventListener('click', function(event) {
     	}
     	else if (sortType.getSelected() === "Optimized Gnome") {
     		doMods(optimizedGnomeSort([...myGraph.getItems()]));
+    	}
+    	else if (sortType.getSelected() === "Reverse") {
+    		doMods(reverseArr([...myGraph.getItems()]));
     	}
     	else {
     		enableButtons();
