@@ -104,31 +104,46 @@ class Graph {
 		this.top = top;
 		this.width = width;
 		this.height = height;
-		this.color = "#10FF10";
-		this.border = "#000000";
+		this.color = "#FFFFFF";
+		this.highlightColor = "#00FF00";
 		this.duplicates = false;
-		this.setLength(100);
+		this.setLength(25);
+		this.lastHighlight = [];
 	}
-	draw(bold) { // bold is an array of each bolded index (in order from least to greatest)
-		ctx.clearRect(this.left, this.top, this.width, this.height);
-		var length = this.items.length;
-		var boldIndex = 0;
-		for (var i = 0; i < length; i++) {
-			var x = this.left + i * this.width / length;
-			var tall = this.items[i] / length * this.height;
-			var y = this.top + this.height - tall;
-			ctx.fillStyle = this.border;
-			ctx.fillRect(x, y, this.width / length, tall);
-			if (i == bold[boldIndex]) {
-				ctx.fillStyle = "#FF0000";
-				if (boldIndex < bold.length - 1)
-					boldIndex++;
-			}
-			else {
-				ctx.fillStyle = this.color;
-			}
-			ctx.fillRect(x + 2, y + 2, this.width / length - 4, tall - 4);
+	draw() { // bold is an array of each bolded index (in order from least to greatest)
+		for (var i = 0; i < this.items.length; i++) {
+			this.drawIndex(i, false);
 		}
+	}
+	replace(index, value) {
+		this.drawUnHighlight();
+		this.lastHighlight = [index];
+		this.items[index] = value;
+		this.drawIndex(index, true);
+
+	}
+	highlight(highlight) {
+		this.drawUnHighlight();
+		this.lastHighlight = highlight;
+		for (var i = 0; i < highlight.length; i++) {
+			this.drawIndex(highlight[i], true);
+		}
+	}
+	drawUnHighlight() {
+		for (var i = 0; i < this.lastHighlight.length; i++) {
+			this.drawIndex(this.lastHighlight[i], false);
+		}
+	}
+	drawIndex(index, isHighlight) {
+		var barWidth = this.width / this.items.length;
+		var x = Math.round(this.left + index * barWidth);
+		var x2 = this.left + (index + 1) * barWidth;
+		barWidth = Math.round(x2 - x);
+		var tall = Math.round(this.items[index] / this.items.length * this.height);
+		ctx.clearRect(x, this.top, barWidth, this.height);
+		if (isHighlight) ctx.fillStyle = this.highlightColor;
+		else ctx.fillStyle = this.color;
+		ctx.fillRect(x, this.top + this.height - tall, barWidth, tall);
 	}
 	getLength() {
 		return this.items.length;
@@ -142,7 +157,7 @@ class Graph {
 				else
 					this.items.push(i + 1);
 			}
-			this.draw([]);
+			this.draw();
 		}
 	}
 	shuffle() {
@@ -152,7 +167,7 @@ class Graph {
 			this.items[i] = this.items[j];
   			this.items[j] = temp;
 		}
-		this.draw([]);
+		this.draw();
 	}
 	setDuplicates(hasDups) {
 		this.duplicates = hasDups;
@@ -170,6 +185,9 @@ class Graph {
 
 myGraph = new Graph(10, 10, 980, 440);
 
+ctx.fillStyle = "#FFFFFF";
+ctx.fillRect(0, 470, 1000, 130);
+
 sortType = new Selector("#9090FF", "#707070", "#FF0000");
 sortType.addButton(10, 480, 100, 50, "Bubble Sort");
 sortType.addButton(10, 540, 100, 50, "Insertion Sort");
@@ -180,7 +198,7 @@ sortType.addButton(230, 540, 100, 50, "Gnome Sort");
 sortType.addButton(340, 480, 100, 50, "Optimized Gnome");
 sortType.addButton(340, 540, 100, 50, "Median Heap 2");
 sortType.addButton(450, 480, 100, 50, "Reverse");
-sortType.addButton(450, 540, 100, 50, "");
+sortType.addButton(450, 540, 100, 50, "Stupid Heap");
 
 shuffleButton = new Button(560, 480, 110, 110, "Shuffle", "#20C010", "#000000");
 dupButton = new Button(705, 480, 100, 50, "duplicates: off", "#C01010", "#000000");
@@ -329,6 +347,9 @@ c.addEventListener('click', function(event) {
     	else if (sortType.getSelected() === "Reverse") {
     		doMods(reverseArr([...myGraph.getItems()]));
     	}
+    	else if (sortType.getSelected() === "Stupid Heap") {
+    		doMods(stupidHeapSort([...myGraph.getItems()]));
+    	}
     	else {
     		enableButtons();
     		console.log("Failed to find " + sortType.getSelected() + " sort.");
@@ -338,27 +359,25 @@ c.addEventListener('click', function(event) {
 }, false);
 
 function doMods(mods) {
-	var arr = myGraph.getItems();
-	var delay = 1500 / arr.length;
-	setTimeout(modify, 100, arr, mods, 0, delay, 0, 0, 0);
+	var delay = 1500 / myGraph.getLength();
+	setTimeout(modify, 100, mods, 0, delay, 0, 0, 0);
 }
 
-function modify(arr, mods, i, delay, reads, writes, comps) {
+function modify(mods, i, delay, reads, writes, comps) {
 	if (i < mods.length) {
 		if (mods[i][0] === "read") {
-			modify(arr, mods, i + 1, delay, reads + 1, writes, comps);
+			modify(mods, i + 1, delay, reads + 1, writes, comps);
 		}
 		else {
 			if (mods[i][0] === "compare") {
 				comps++;
-				myGraph.draw([mods[i][1], mods[i][2]]);
+				myGraph.highlight([mods[i][1], mods[i][2]]);
 			}
 			else if (mods[i][0] === "write") {
 				writes++;
-				arr[mods[i][1]] = mods[i][2];
-				myGraph.draw([mods[i][1]]);
+				myGraph.replace(mods[i][1], mods[i][2]);
 			}
-			setTimeout(modify, delay, arr, mods, i + 1, delay, reads, writes, comps);
+			setTimeout(modify, delay, mods, i + 1, delay, reads, writes, comps);
 		}
 	}
 	else {

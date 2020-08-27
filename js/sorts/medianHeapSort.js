@@ -70,6 +70,17 @@ function medianHeapSort2R(arr, begin, end, mods) {
 	}
 }
 
+function stupidHeapSort(arr) {
+	var mods = [];
+	buildMinHeap(arr, 0, arr.length - 1, mods);
+	for (var i = arr.length - 1; i > 0; i--) {
+		swap(arr, 0, i, mods);
+		minHeapify(arr, 0, i, 0, mods);
+	}
+	reverse(arr, 0, arr.length - 1, mods);
+	return mods;
+}
+
 // creates a min heap on the sub-array of arr
 function buildMinHeap(arr, begin, end, mods) {
 	var n = end - begin + 1;
