@@ -183,7 +183,7 @@ class Graph {
 
 // make visuals -------------------------------------------------------------------
 
-myGraph = new Graph(10, 10, 980, 440);
+myGraph = new Graph(0, 0, 1000, 450);
 
 ctx.fillStyle = "#FFFFFF";
 ctx.fillRect(0, 470, 1000, 130);
@@ -381,7 +381,7 @@ function modify(mods, i, delay, reads, writes, comps) {
 		}
 	}
 	else {
-		setTimeout(endMods, delay, reads, writes, comps);
+		setTimeout(endMods, 100, reads, writes, comps);
 	}
 }
 
